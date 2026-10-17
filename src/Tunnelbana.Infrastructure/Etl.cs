@@ -50,7 +50,7 @@ public sealed class MetroEtlPipeline(MetroDbContext db, ISlSitesClient sl, IElev
         {
             var sc = new GeoCoordinate(seed.Lat, seed.Lon);
             var m = sites.Where(x => string.Equals(x.Name, seed.Name, StringComparison.OrdinalIgnoreCase))
-                .Select(x => (Site: x, D: sc.DistanceMetersTo(new GeoCoordinate(x.Lat, x.Lon)))).Where(t => t.D < 500)
+                .Select(x => (Site: x, D: sc.DistanceMetersTo(new GeoCoordinate(x.Lat, x.Lon)))).Where(t => t.D < 2000)
                 .OrderBy(t => t.D).Select(t => t.Site).FirstOrDefault();
             return (Seed: seed, Loc: m is null ? sc : new GeoCoordinate(m.Lat, m.Lon), SiteId: m?.Id.ToString());
         }).ToList();

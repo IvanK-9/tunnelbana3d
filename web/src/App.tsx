@@ -35,9 +35,9 @@ export function App() {
   if (!g) return <div style={{ color: "#fff", padding: 16 }}>Waiting for network (ETL running)…</div>;
 
   return (
-    <Canvas camera={{ position: [0, 2500, 3500], fov: 45, far: 50000 }}>
+    <Canvas camera={{ position: [-3500, 6000, 9000], fov: 45, far: 100000 }}>
       <ambientLight intensity={0.7} /><directionalLight position={[2000, 4000, 1000]} intensity={1.2} />
-      <gridHelper args={[12000, 60, "#334", "#223"]} />
+      <gridHelper args={[30000, 60, "#334", "#223"]} />
       {g.edges.map(e => <Tunnel key={e.id} edge={e} colour={colour[e.lineId] ?? "#888"} />)}
       {g.nodes.map(n => (
         <group key={n.id}>
