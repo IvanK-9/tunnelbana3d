@@ -1,0 +1,24 @@
+services:
+  db:
+    image: postgis/postgis:16-3.4
+    environment: { POSTGRES_DB: tunnelbana, POSTGRES_USER: postgres, POSTGRES_PASSWORD: postgres }
+    volumes: [pgdata:/var/lib/postgresql/data]
+    healthcheck: { test: ["CMD-SHELL", "pg_isready -U postgres -d tunnelbana"], interval: 5s, retries: 10 }
+    ports: ["5432:5432"]
+  redis:
+    image: redis:7-alpine
+    healthcheck: { test: ["CMD", "redis-cli", "ping"], interval: 5s, retries: 10 }
+  api:
+    restart: on-failure
+    build: { context: ., dockerfile: src/Tunnelbana.Api/Dockerfile }
+    environment:
+      ConnectionStrings__Postgres: Host=db;Database=tunnelbana;Username=postgres;Password=postgres
+      ConnectionStrings__Redis: redis:6379
+      Cors__Origins__0: http://localhost:8081
+    depends_on: { db: { condition: service_healthy }, redis: { condition: service_healthy } }
+    ports: ["8080:8080"]
+  web:
+    build: ./web
+    depends_on: [api]
+    ports: ["8081:80"]
+volumes: { pgdata: {} }
